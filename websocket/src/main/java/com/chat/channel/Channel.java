@@ -6,6 +6,6 @@ import java.util.Map;
 public class Channel {
     private String name;
     private Long id ;
-    private Map<Long , User> userMap = new HashMap<>();
+    private Map<Long , ChatUser> userMap = new HashMap<>();
 
 }

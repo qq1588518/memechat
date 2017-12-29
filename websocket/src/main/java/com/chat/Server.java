@@ -1,5 +1,6 @@
 package com.chat;
 
+import com.chat.channel.Channel;
 import com.chat.domain.Message;
 import com.chat.domain.User;
 import com.corundumstudio.socketio.*;
@@ -31,7 +32,7 @@ public class Server {
         socketIOServer = new SocketIOServer(this.configuration);
         final SocketIONamespace namespace = socketIOServer.addNamespace("/chat");
         namespace.addEventListener("connect", User.class, (client, user, req) -> {
-            //todo
+
         });
 
         namespace.addEventListener("message", Message.class, (client, message, ackRequest) -> {
