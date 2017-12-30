@@ -1,6 +1,6 @@
-package com.chat.domain;
+package com.chat.vo;
 
-public class User {
+public class UserVo {
     private String name;
     private int age;
     private int sex;

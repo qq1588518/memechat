@@ -1,14 +1,16 @@
 package com.chat;
 
-import com.chat.channel.Channel;
-import com.chat.domain.Message;
-import com.chat.domain.User;
+import com.chat.channel.ChatUser;
+import com.chat.process.UserProcess;
+import com.chat.vo.MessageVo;
+import com.chat.vo.UserVo;
 import com.corundumstudio.socketio.*;
 
 public class Server {
     private Configuration configuration;
     private SocketIOServer socketIOServer;
     private static volatile Server SERVER;
+    private UserProcess userProcess = UserProcess.process();
 
     public static Server me(String hostName, int port) {
         if (null == SERVER) {
@@ -31,15 +33,20 @@ public class Server {
     public void start() {
         socketIOServer = new SocketIOServer(this.configuration);
         final SocketIONamespace namespace = socketIOServer.addNamespace("/chat");
-        namespace.addEventListener("connect", User.class, (client, user, req) -> {
-
+        namespace.addEventListener("connect", UserVo.class, (client, userVo, req) -> {
+            ChatUser chatUser = new ChatUser();
+            chatUser.setName(userVo.getName());
+            chatUser.setSex(userVo.getSex());
+            chatUser.setAge(userVo.getAge());
+            chatUser.setSocketIOClient(client);
+            this.userProcess.createUser(chatUser);
         });
 
-        namespace.addEventListener("message", Message.class, (client, message, ackRequest) -> {
+        namespace.addEventListener("message", MessageVo.class, (client, messageVo, ackRequest) -> {
             //todo
         });
 
-        namespace.addEventListener("disconnect", User.class, (client, message, ackRequest) -> {
+        namespace.addEventListener("disconnect", UserVo.class, (client, message, ackRequest) -> {
             //todo
         });
 

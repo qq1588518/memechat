@@ -1,11 +1,12 @@
 package com.chat.channel;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Channel {
+    private Long id;
     private String name;
-    private Long id ;
-    private Map<Long , ChatUser> userMap = new HashMap<>();
+    private String remark;
+    private List<UUID> channelUser;
+
 
 }
