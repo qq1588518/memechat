@@ -1,6 +1,7 @@
 package com.chat;
 
 import com.chat.channel.ChatUser;
+import com.chat.process.ChannelProcess;
 import com.chat.process.UserProcess;
 import com.chat.vo.MessageVo;
 import com.chat.vo.UserVo;
@@ -11,6 +12,7 @@ public class Server {
     private SocketIOServer socketIOServer;
     private static volatile Server SERVER;
     private UserProcess userProcess = UserProcess.process();
+    //private ChannelProcess channelProcess = ChannelProcess.process();
 
     public static Server me(String hostName, int port) {
         if (null == SERVER) {
@@ -39,7 +41,12 @@ public class Server {
             chatUser.setSex(userVo.getSex());
             chatUser.setAge(userVo.getAge());
             chatUser.setSocketIOClient(client);
+            chatUser.setSessionId(client.getSessionId());
             this.userProcess.createUser(chatUser);
+            this.userProcess.addWaitUser(chatUser.getSessionId());
+            //开始匹配
+            this.userProcess.match(chatUser.getSessionId());
+            //this.channelProcess.joinChannel(chatUser);
         });
 
         namespace.addEventListener("message", MessageVo.class, (client, messageVo, ackRequest) -> {

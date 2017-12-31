@@ -2,15 +2,13 @@ package com.chat.process;
 
 import com.chat.channel.ChatUser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserProcess {
     private static List<UUID> WAIT_USER = new ArrayList<>();
     private static Map<UUID, ChatUser> USER_MAP = new ConcurrentHashMap(32);
+    private Random random = new Random();
 
     private UserProcess() {
     }
@@ -24,7 +22,6 @@ public class UserProcess {
             return;
         }
         USER_MAP.put(user.getSessionId(), user);
-        this.addWaitUser(user.getSessionId());
     }
 
     public ChatUser getChatUser(UUID uuid) {
@@ -36,13 +33,41 @@ public class UserProcess {
         this.removeWaitUser(uuid);
     }
 
-    public void removeWaitUser(UUID uuid) {
-        if (WAIT_USER.contains(uuid))
-            WAIT_USER.remove(uuid);
+    public void removeWaitUser(UUID... uuid) {
+        for (UUID id : uuid) {
+            if (WAIT_USER.contains(id))
+                WAIT_USER.remove(id);
+        }
+
     }
 
     public void addWaitUser(UUID uuid) {
         WAIT_USER.add(uuid);
+    }
+
+    public int getWaitUserLen() {
+        return WAIT_USER.size();
+    }
+
+    public void match(UUID uuid) {
+        if (1 < getWaitUserLen()) {
+            ChatUser me, friend;
+            while (true) {
+                int pos = random.nextInt(getWaitUserLen());
+                UUID friendId = WAIT_USER.get(pos);
+                if (uuid == friendId) {
+                    continue;
+                }
+                friend = getChatUser(friendId);
+                me = getChatUser(uuid);
+                removeWaitUser(uuid, friendId);
+                break;
+            }
+            if (null != me && null != friend) {
+
+            }
+        }
+
     }
 
     public static class UserHelper {
